@@ -30,7 +30,7 @@ function ShowEntryWrapper() {
     <BrowserRouter>
     <NavBar />
     <Routes>
-      <Route path='/' element={<Home />} />
+      <Route path='/' element={<Home entries={entries} />} />
       <Route path='/category' element={<CategorySelection />} />
       <Route path='/entry'>
         <Route path=":id" element={<ShowEntryWrapper />} /> {/*here is where we place our HOC, so that now the id is retrieved from the route, applied to the function, and then used to retrieve the index of entry posts as the 'id'*/}
