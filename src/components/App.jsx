@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import CategorySelection from './CategorySelection'
 import NewEntry from './NewEntry'
 import Home from './Home'
-import { BrowserRouter, Routes, Route, useParams } from "react-router-dom"
+import { BrowserRouter, Routes, Route, useParams, useNavigate } from "react-router-dom"
 import NavBar from './NavBar'
 import ShowEntry from './ShowEntry'
 
@@ -16,35 +16,47 @@ const seedEntries = [
 ]
 
 const App = () => {
+  let nav
   const [entries, setEntries] = useState(seedEntries)
+  // console.log(`id: ${id}`)
 
+  // HOC (higher-order component)
+  function ShowEntryWrapper() {
+    const { id } = useParams()
+    return <ShowEntry entry={entries[id]} />
+  }
 
-// HOC (Higher Order Component) - uses useParams and applies it to ShowEntry, allowing the id passed in the route to be the index of entries
-function ShowEntryWrapper() {
-  const { id } = useParams()
-  return <ShowEntry entry={entries[id]} /> 
-}
+  function NewEntryWrapper() {
+    nav = useNavigate()
+    return <NewEntry addEntry={addEntry} />
+  }
+
+  function addEntry(category, content) {
+    const id = entries.length
+    // Add a new entry
+    const newEntry = { category, content }
+    setEntries([...entries, newEntry])
+    nav(`/entry/${id}`)
+  }
 
   return (
     <>
-    <BrowserRouter>
-    <NavBar />
-    <Routes>
-      <Route path='/' element={<Home entries={entries} />} />
-      <Route path='/category' element={<CategorySelection />} />
-      <Route path='/entry'>
-        <Route path=":id" element={<ShowEntryWrapper />} /> {/*here is where we place our HOC, so that now the id is retrieved from the route, applied to the function, and then used to retrieve the index of entry posts as the 'id'*/}
-        <Route path='new/:category' element={<NewEntry entries={entries} setEntries={setEntries} />} />
-      </Route>
-      <Route path='*' element={<h3>Page not found</h3>} />
-    </Routes>
-    </BrowserRouter>
-    {/* <Home />
-    <CategorySelection />
-    <NewEntry /> */}
+      <BrowserRouter>
+        <NavBar />
+        <Routes>
+          <Route path="/" element={<Home entries={entries} />} />
+          <Route path="/category" element={<CategorySelection />} />
+          <Route path="/entry">
+            <Route path=":id" element={<ShowEntryWrapper />} />
+            <Route path="new/:category" element={<NewEntryWrapper />} />
+          </Route>
+          <Route path="*" element={<h3>Page not found</h3>} />
+        </Routes>
+      </BrowserRouter>
+      {/* <Home />
+      <CategorySelection />
+      <NewEntry /> */}
     </>
-    
-
   )
 }
 
