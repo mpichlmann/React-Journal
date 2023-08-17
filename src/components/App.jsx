@@ -12,13 +12,15 @@ import ShowEntry from "./ShowEntry"
 //   { category: "Gaming", content: "Skyrim is for the Nords!" },
 // ]
 
+`${import.meta.env.VITE_API_HOST}entries`
+
 const App = () => {
   const nav = useNavigate()
   const [entries, setEntries] = useState([])
 
   useEffect(() => {
     const getEntries = async () => { 
-        const res = await fetch('http://localhost:4001/entries')
+        const res = await fetch(`${import.meta.env.VITE_API_HOST}/entries`)
         const data = await res.json()
         setEntries(data)
     }
@@ -34,7 +36,7 @@ const App = () => {
   async function addEntry(category, content) {
     const id = entries.length
     // Add a new entry
-    const returnedEntry = await fetch('http://localhost:4001/entries', {
+    const returnedEntry = await fetch(`${import.meta.env.VITE_API_HOST}/entries`, {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"
